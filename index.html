@@ -288,7 +288,6 @@
         <div class="card">
             <h2>1. 스타일 & 프로필</h2>
             
-            <!-- 변경된 체크박스 형태의 사진 적용 기능 -->
             <div class="photo-check-box">
                 <label>
                     <input type="checkbox" id="usePhoto" onchange="generatePrompt()"> 📸 레퍼런스 사진(얼굴) 추가 여부
@@ -299,8 +298,8 @@
             <div class="form-group">
                 <label>아트 스타일</label>
                 <select id="artStyle" onchange="generatePrompt()">
+                    <option value="Maplestory game style, cute 2D pixel art character, side-scroller sprite art style">🍁 메이플스토리 도트/픽셀 스타일</option>
                     <option value="Cute Chibi-style 3D digital illustration">3D 치비 스타일</option>
-                    <option value="Maplestory game style, cute 2D side-scroller sprite character">🍁 메이플스토리 게임 스타일</option>
                     <option value="2D Japanese anime style">2D 일본 애니메이션</option>
                     <option value="Retro 8-bit pixel art style">레트로 8비트 픽셀 아트</option>
                     <option value="Realistic 3D cinematic render">실사풍 3D 시네마틱</option>
@@ -310,28 +309,26 @@
             <div class="form-group">
                 <label>성별 (Gender)</label>
                 <select id="gender" onchange="generatePrompt()">
-                    <option value="male">남성 (Male)</option>
                     <option value="female">여성 (Female)</option>
+                    <option value="male">남성 (Male)</option>
                     <option value="gender-neutral">중성적 (Gender-neutral)</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>연령대 (Age)</label>
                 <select id="ageGroup" onchange="generatePrompt()">
+                    <option value="teenager student in 10s">10대 학생 (Teenager)</option>
                     <option value="young adult in 20s">20대 (Young Adult)</option>
-                    <option value="teenager in 10s">10대 (Teenager)</option>
                     <option value="adult in 30s">30대 (Adult)</option>
                     <option value="middle-aged adult in 40s">40대 (Middle-aged)</option>
-                    <option value="mature adult in 50s">50대 (Mature Adult)</option>
                 </select>
             </div>
             <div class="form-group" id="faceBaseGroup">
                 <label>얼굴/특징 모델 (사진 체크 해제 시 적용)</label>
                 <select id="faceBase" onchange="generatePrompt()">
+                    <option value="cheerful face with long straight brown hair, centered part, and big dark brown eyes">긴 브라운 헤어 + 맑은 눈망울 (여학생 기본)</option>
                     <option value="cheerful face with bright friendly eyes and neat short hair">밝고 친근한 인상</option>
-                    <option value="Albert Einstein face with messy bushy white hair and thick white mustache, no monocle">아인슈타인</option>
                     <option value="wise scholar face with round glasses and a gentle smile">안경 쓴 학자 인상</option>
-                    <option value="futuristic cyberpunk cyborg face with sleek metallic accents">사이버펑크 얼굴</option>
                     <option value="Custom">직접 입력 (커스텀)</option>
                 </select>
             </div>
@@ -347,16 +344,16 @@
             <div class="form-group">
                 <label>의상 복장 분류</label>
                 <select id="outfitCategory" onchange="toggleOutfitOptions()">
+                    <option value="school">🏫 교복 스타일 (스쿨룩)</option>
                     <option value="suit">👔 비즈니스 수트 (커스텀 설정)</option>
-                    <option value="school">교복 스타일</option>
                     <option value="lab">연구원 가운</option>
                     <option value="sci-fi">사이버 네온 슈트</option>
                     <option value="casual">후드티와 청바지</option>
                 </select>
             </div>
 
-            <!-- 정장 세부 커스텀 영역 (체크박스 6개) -->
-            <div id="suitCustomArea" class="suit-custom-box">
+            <!-- 정장 세부 커스텀 영역 -->
+            <div id="suitCustomArea" class="suit-custom-box" style="display:none;">
                 <div class="title">👔 정장 상세 조합</div>
                 <div class="checkbox-group">
                     <label class="checkbox-item"><input type="checkbox" id="chkWhiteJacket" onchange="handleSuitCheck('jacket', 'white')"> 흰색 재킷</label>
@@ -367,6 +364,7 @@
                     <div style="grid-column: span 1;">
                         <select id="tieColor" disabled onchange="generatePrompt()" style="padding:0.25rem 0.4rem; font-size:0.75rem;">
                             <option value="bright yellow">노란색 타이</option>
+                            <option value="green striped">초록 스트라이프 타이</option>
                             <option value="red">빨간색 타이</option>
                             <option value="navy blue">네이비 타이</option>
                             <option value="black">검은색 타이</option>
@@ -378,8 +376,8 @@
             <div class="form-group" style="margin-top:0.75rem;">
                 <label>캐릭터 포즈</label>
                 <select id="pose" onchange="generatePrompt()">
-                    <option value="perfect A-pose standing straight with arms angled downwards">정면 A-자세 (A-pose)</option>
                     <option value="T-pose standing straight with arms outstretched horizontally">정면 T-자세 (T-pose)</option>
+                    <option value="perfect A-pose standing straight with arms angled downwards">정면 A-자세 (A-pose)</option>
                     <option value="confident standing pose with one hand waving hello">인사하는 자세</option>
                     <option value="sitting thoughtfully at a desk with a computer">책상에 앉은 자세</option>
                 </select>
@@ -389,17 +387,15 @@
                 <select id="background" onchange="generatePrompt()">
                     <option value="clean solid pure white background">단색 순백색 (Solid White)</option>
                     <option value="clean solid light gray studio background">연회색 스튜디오</option>
-                    <option value="transparent style simple clean background">투명 스타일 깨끗한 배경</option>
-                    <option value="futuristic high-tech computer lab background">컴퓨터 실습실 배경</option>
+                    <option value="transparent style simple clean background">투명 스타일 배경</option>
                 </select>
             </div>
             <div class="form-group">
                 <label>조명 연출</label>
                 <select id="lighting" onchange="generatePrompt()">
+                    <option value="soft balanced lighting, clean sprite colors">부드러운 스프라이트 조명</option>
                     <option value="vibrant neon glow lighting">화려한 네온 조명</option>
-                    <option value="soft studio lighting, bright character concept art setup">부드러운 스튜디오 조명</option>
-                    <option value="dramatic cinematic lighting with soft shadows">드라마틱 시네마틱 조명</option>
-                    <option value="warm natural sunlight coming from the side">따뜻한 자연 햇살</option>
+                    <option value="soft studio lighting, bright character concept art setup">스튜디오 조명</option>
                 </select>
             </div>
         </div>
@@ -434,10 +430,9 @@
         <h2>4. 이미지 품질 및 그래픽 설정</h2>
         <div class="form-group">
             <select id="quality" onchange="generatePrompt()">
-                <option value="text-free requirement, no random letters, no typography, pure graphic only, high resolution, highly detailed character design">텍스트 완전 배제 + 고화질 디테일 (추천)</option>
-                <option value="masterpiece, best quality, highly detailed, sharp focus, 8k resolution, text-free">마스터피스 최고 품질 + 선명한 포커스</option>
-                <option value="clean vector graphic, smooth shading, precise lines, text-free">클린 벡터 그래픽 + 매끄러운 셰이딩</option>
-                <option value="unreal engine 5 render, octane render, extremely detailed, text-free">언리얼 엔진 5 / 옥테인 렌더링 스타일</option>
+                <option value="crisp pixel lines, precise pixel art grids, no blur, text-free, pure character design">도트/픽셀 그래픽 최적화 (선명한 픽셀 라인)</option>
+                <option value="text-free requirement, no random letters, no typography, pure graphic only, high resolution, highly detailed character design">텍스트 완전 배제 + 고화질 디테일</option>
+                <option value="masterpiece, best quality, highly detailed, sharp focus, 8k resolution, text-free">마스터피스 최고 품질</option>
             </select>
         </div>
     </div>
@@ -474,7 +469,6 @@
 
     let selectedMBTI = "ISTJ";
 
-    // 정장/일반 의상 카테고리 전환
     function toggleOutfitOptions() {
         const category = document.getElementById('outfitCategory').value;
         const suitArea = document.getElementById('suitCustomArea');
@@ -482,7 +476,6 @@
         generatePrompt();
     }
 
-    // 정장/셔츠 상호 배타적 선택 처리 (재킷 색상 하나, 셔츠 색상 하나만 선택 가능)
     function handleSuitCheck(type, color) {
         if (type === 'jacket') {
             if (color === 'white') document.getElementById('chkBlackJacket').checked = !document.getElementById('chkWhiteJacket').checked;
@@ -494,7 +487,6 @@
         generatePrompt();
     }
 
-    // 넥타이 체크박스 토글
     function toggleTieColor() {
         const hasTie = document.getElementById('chkTie').checked;
         document.getElementById('tieColor').disabled = !hasTie;
@@ -509,23 +501,27 @@
         generatePrompt();
     }
 
-    // 의상 프롬프트 빌더 함수
     function buildOutfitPrompt() {
         const category = document.getElementById('outfitCategory').value;
+        const gender = document.getElementById('gender').value;
 
-        if (category === 'suit') {
+        if (category === 'school') {
+            if (gender === 'female') {
+                return "a modern high school uniform with a dark navy blazer, white collared shirt, green striped tie, grey pleated skirt, black knee-high socks, and black loafers";
+            } else {
+                return "a modern high school uniform with a dark navy blazer, white collared shirt, green striped tie, grey dress trousers, and black leather shoes";
+            }
+        } else if (category === 'suit') {
             const isWhiteJacket = document.getElementById('chkWhiteJacket').checked;
             const isWhiteShirt = document.getElementById('chkWhiteShirt').checked;
             const hasTie = document.getElementById('chkTie').checked;
             const tieColor = document.getElementById('tieColor').value;
 
-            let jacketStr = isWhiteJacket ? "a neat white blazer formal suit" : "a sleek black formal business suit";
+            let jacketStr = isWhiteJacket ? "a neat white blazer formal suit" : "a sleek dark navy/black formal suit";
             let shirtStr = isWhiteShirt ? "with a crisp white shirt" : "with a dark black shirt";
             let tieStr = hasTie ? `, and a ${tieColor} tie` : ", no tie, modern open-collar style";
 
             return `${jacketStr} ${shirtStr}${tieStr}`;
-        } else if (category === 'school') {
-            return "a modern high school uniform with a blazer and neat tie";
         } else if (category === 'lab') {
             return "a white lab coat over a casual shirt with various stationery in pocket";
         } else if (category === 'sci-fi') {
@@ -558,7 +554,6 @@
         const mbtiTrait = mbtiMap[selectedMBTI].trait;
         const quality = document.getElementById('quality').value;
 
-        // 체크박스 값에 따른 얼굴 지시문 분기
         const usePhoto = document.getElementById('usePhoto').checked;
         let faceInstruction = "";
         
