@@ -1,3 +1,12 @@
+제시해주신 통합 코드의 **[아트 스타일]** 드롭다운 메뉴에 **'메이플스토리 게임 스타일'** 옵션을 깔끔하게 추가했습니다.
+
+`artStyle` 선택지에 **Maplestory game style** 옵션이 새로 포함되어, 선택 시 메이플스토리 특유의 귀여운 2D 스프라이트 도트/일러스트 스타일 지시문(`Maplestory game style, cute 2D side-scroller sprite character`)이 프롬프트에 자동으로 조합됩니다.
+
+---
+
+### 📄 업데이트된 웹 애플리케이션 통합 코드 (`index.html`)
+
+```html
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -300,6 +309,7 @@
                 <label>아트 스타일</label>
                 <select id="artStyle" onchange="generatePrompt()">
                     <option value="Cute Chibi-style 3D digital illustration">3D 치비 스타일</option>
+                    <option value="Maplestory game style, cute 2D side-scroller sprite character">🍁 메이플스토리 게임 스타일</option>
                     <option value="2D Japanese anime style">2D 일본 애니메이션</option>
                     <option value="Retro 8-bit pixel art style">레트로 8비트 픽셀 아트</option>
                     <option value="Realistic 3D cinematic render">실사풍 3D 시네마틱</option>
@@ -592,3 +602,5 @@
 
 </body>
 </html>
+
+```
