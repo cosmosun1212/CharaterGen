@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 캐릭터 프롬프트 생성기</title>
+    <title>AI 캐릭터 프롬프트 생성기 v2.0</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -13,6 +14,7 @@
             --text-color: #f8fafc;
             --text-muted: #94a3b8;
             --border-color: #334155;
+            --badge-bg: rgba(56, 189, 248, 0.15);
         }
 
         * {
@@ -31,7 +33,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             width: 100%;
         }
 
@@ -51,15 +53,21 @@
             font-size: 0.9rem;
         }
 
-        .top-row-grid {
+        .main-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin-bottom: 1rem;
         }
 
-        @media (max-width: 900px) {
-            .top-row-grid {
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -69,29 +77,31 @@
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .card h2 {
             font-size: 1rem;
             color: var(--accent-color);
-            margin-bottom: 0.8rem;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
 
         .form-group {
-            margin-bottom: 0.75rem;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
         }
 
         label {
-            display: block;
             font-size: 0.8rem;
             color: var(--text-muted);
-            margin-bottom: 0.3rem;
+            font-weight: 500;
         }
 
         select, input[type="text"] {
@@ -110,80 +120,96 @@
             border-color: var(--accent-color);
         }
 
-        /* 사진 적용 체크박스 스타일 */
-        .photo-check-box {
+        /* 조건 1: 레퍼런스 사진 & 나이 설정 박스 */
+        .photo-age-box {
             background-color: rgba(56, 189, 248, 0.08);
             border: 1px dashed var(--accent-color);
             padding: 0.75rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .photo-check-box label {
+        .photo-check-row {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .photo-check-row label {
             color: var(--accent-color);
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            margin-bottom: 0.2rem;
-        }
-
-        .photo-check-box input[type="checkbox"] {
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-            accent-color: var(--accent-color);
-        }
-
-        .photo-check-box p {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-left: 1.5rem;
-        }
-
-        /* 정장 세부 커스텀 박스 스타일 */
-        .suit-custom-box {
-            background-color: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin-top: 0.5rem;
-        }
-
-        .suit-custom-box .title {
-            font-size: 0.8rem;
-            color: var(--accent-color);
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .checkbox-group {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-        }
-
-        .checkbox-item {
+            margin: 0;
             display: flex;
             align-items: center;
             gap: 0.4rem;
-            font-size: 0.8rem;
-            color: var(--text-color);
-            cursor: pointer;
         }
 
-        .checkbox-item input[type="checkbox"] {
+        .photo-check-row input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
             accent-color: var(--accent-color);
             cursor: pointer;
         }
 
+        .age-inline-group {
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        /* 악세사리 체크박스 + 콤보박스 그리드 */
+        .acc-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.4rem;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 0.6rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .acc-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .acc-item label {
+            min-width: 70px;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin: 0;
+        }
+
+        .acc-item input[type="checkbox"] {
+            accent-color: var(--accent-color);
+            cursor: pointer;
+        }
+
+        .acc-item select {
+            flex: 1;
+            padding: 0.25rem 0.4rem;
+            font-size: 0.78rem;
+        }
+
+        .acc-item select:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* MBTI 그리드 */
         .mbti-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 0.35rem;
-            margin-bottom: 0.5rem;
         }
 
         .mbti-btn {
@@ -214,13 +240,8 @@
         .mbti-desc {
             font-size: 0.75rem;
             color: var(--accent-color);
-            margin-top: 0.4rem;
-            min-height: 2.2em;
+            min-height: 2em;
             line-height: 1.3;
-        }
-
-        .bottom-card {
-            margin-bottom: 1rem;
         }
 
         .output-section {
@@ -228,6 +249,7 @@
             border: 1px solid var(--border-color);
             border-radius: 10px;
             padding: 1.25rem;
+            margin-top: 1rem;
         }
 
         .output-header {
@@ -244,7 +266,7 @@
 
         textarea {
             width: 100%;
-            height: 130px;
+            height: 140px;
             background-color: var(--bg-color);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -273,62 +295,87 @@
             background-color: var(--accent-hover);
             color: white;
         }
+
+        .recommend-badge {
+            background-color: var(--badge-bg);
+            color: var(--accent-color);
+            font-size: 0.7rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            margin-top: 0.2rem;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>🎨 AI 캐릭터 프롬프트 빌더</h1>
-        <p>1, 2, 3번 옵션을 한눈에 확인하고 영문 프롬프트를 조합하세요.</p>
+        <h1>🎨 AI 캐릭터 프롬프트 빌더 v2.0</h1>
+        <p>화풍, 성별, 나이, 복장, 악세사리, 표정/포즈, 구도 및 품질까지 완벽 조합</p>
     </header>
 
-    <div class="top-row-grid">
-        <!-- 1. 캐릭터 스타일 & 프로필 -->
+    <div class="main-grid">
+        <!-- 1. 스타일 & 기본 프로필 -->
         <div class="card">
             <h2>1. 스타일 & 프로필</h2>
             
-            <div class="photo-check-box">
-                <label>
-                    <input type="checkbox" id="usePhoto" onchange="generatePrompt()"> 📸 레퍼런스 사진(얼굴) 추가 여부
-                </label>
-                <p>체크 시 프롬프트에 '첨부된 사진의 얼굴 반영' 지시문이 적용됩니다.</p>
+            <!-- 조건 1: 레퍼런스 체크 + 나이 설정 (콤보박스 + 직접입력) -->
+            <div class="photo-age-box">
+                <div class="photo-check-row">
+                    <label>
+                        <input type="checkbox" id="usePhoto" onchange="generatePrompt()"> 📸 레퍼런스 사진(얼굴) 추가
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>나이 (Age Group)</label>
+                    <div class="age-inline-group">
+                        <select id="ageGroup" onchange="handleAgeChange()">
+                            <option value="teenager student in 10s">10대 (Teenager)</option>
+                            <option value="young adult in 20s" selected>20대 (Young Adult)</option>
+                            <option value="adult in 30s">30대 (Adult)</option>
+                            <option value="young forty in 40s">40대 (Young Forty)</option>
+                            <option value="senior in 50s">50대 (Senior)</option>
+                            <option value="Custom">직접 입력</option>
+                        </select>
+                    </div>
+                    <input type="text" id="customAge" placeholder="예: 60s elder with graceful posture" style="display:none; margin-top:0.3rem;" oninput="generatePrompt()">
+                </div>
+            </div>
+
+            <!-- 조건 2: 화풍 스타일 10가지 세분화 -->
+            <div class="form-group">
+                <label>아트 스타일 (10가지 세분화)</label>
+                <select id="artStyle" onchange="generatePrompt()">
+                    <option value="Maplestory game style, cute 2D pixel art character, side-scroller sprite art style">🍁 메이플스토리 도트/픽셀 스타일</option>
+                    <option value="Cute Chibi-style 3D digital illustration, smooth clay render">🧸 3D 치비 스타일 (Chibi 3D)</option>
+                    <option value="2D Japanese anime style, clean lineart, vibrant anime key visual">🎨 2D 셀채색 애니메이션 (Japanese Anime)</option>
+                    <option value="Retro 8-bit pixel art style, nostalgic arcade video game sprite">👾 레트로 8비트/16비트 픽셀 아트</option>
+                    <option value="Realistic 3D cinematic render, photorealistic lighting, Unreal Engine 5 render">🎬 실사풍 3D 시네마틱 (Cinematic 3D)</option>
+                    <option value="American comic book style, bold ink lines, pop-art halftone dots">💥 아메리칸 코믹북 (Comic Book Style)</option>
+                    <option value="Soft watercolor illustration, delicate brush strokes, pastel color aesthetic">🖌️ 수채화 일러스트 (Watercolor)</option>
+                    <option value="Cyberpunk synthwave style, glowing neon aesthetics, dark futuristic backdrop">🏙️ 사이버펑크 네온 (Cyberpunk Synthwave)</option>
+                    <option value="Fantasy oil painting concept art, rich textures, dramatic lighting">🏰 판타지 유화 컨셉아트 (Oil Painting)</option>
+                    <option value="Vector flat design illustration, minimalist clean edges, modern graphic art">📐 벡터 플랫 일러스트 (Flat Vector)</option>
+                </select>
             </div>
 
             <div class="form-group">
-                <label>아트 스타일</label>
-                <select id="artStyle" onchange="generatePrompt()">
-                    <option value="Maplestory game style, cute 2D pixel art character, side-scroller sprite art style">🍁 메이플스토리 도트/픽셀 스타일</option>
-                    <option value="Cute Chibi-style 3D digital illustration">3D 치비 스타일</option>
-                    <option value="2D Japanese anime style">2D 일본 애니메이션</option>
-                    <option value="Retro 8-bit pixel art style">레트로 8비트 픽셀 아트</option>
-                    <option value="Realistic 3D cinematic render">실사풍 3D 시네마틱</option>
-                    <option value="American comic book style">아메리칸 코믹북</option>
-                </select>
-            </div>
-            <div class="form-group">
                 <label>성별 (Gender)</label>
-                <select id="gender" onchange="generatePrompt()">
-                    <option value="female">여성 (Female)</option>
+                <select id="gender" onchange="handleGenderChange()">
+                    <option value="female" selected>여성 (Female)</option>
                     <option value="male">남성 (Male)</option>
                     <option value="gender-neutral">중성적 (Gender-neutral)</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>연령대 (Age)</label>
-                <select id="ageGroup" onchange="generatePrompt()">
-                    <option value="teenager student in 10s">10대 학생 (Teenager)</option>
-                    <option value="young adult in 20s">20대 (Young Adult)</option>
-                    <option value="adult in 30s">30대 (Adult)</option>
-                    <option value="middle-aged adult in 40s">40대 (Middle-aged)</option>
-                </select>
-            </div>
+
             <div class="form-group" id="faceBaseGroup">
                 <label>얼굴/특징 모델 (사진 체크 해제 시 적용)</label>
                 <select id="faceBase" onchange="generatePrompt()">
-                    <option value="cheerful face with long straight brown hair, centered part, and big dark brown eyes">긴 브라운 헤어 + 맑은 눈망울 (여학생 기본)</option>
-                    <option value="cheerful face with bright friendly eyes and neat short hair">밝고 친근한 인상</option>
-                    <option value="wise scholar face with round glasses and a gentle smile">안경 쓴 학자 인상</option>
+                    <option value="cheerful face with long straight brown hair and big dark brown eyes">긴 브라운 헤어 + 맑은 눈망울</option>
+                    <option value="cheerful face with bright friendly eyes and neat short hair">밝고 친근한 단발 헤어</option>
+                    <option value="wise scholar face with a gentle warm smile">온화한 지성인 인상</option>
+                    <option value="handsome charismatic face with sharp jawline and sleek dark hair">샤프하고 카리스마 있는 인상</option>
                     <option value="Custom">직접 입력 (커스텀)</option>
                 </select>
             </div>
@@ -338,237 +385,510 @@
             </div>
         </div>
 
-        <!-- 2. 의상, 포즈 & 배경 -->
+        <!-- 2. 복장 & 색상 (남/여 및 수영복 10가지 세분화) -->
         <div class="card">
-            <h2>2. 의상 / 포즈 / 배경</h2>
+            <h2>2. 복장 & 색상 설정</h2>
             <div class="form-group">
-                <label>의상 복장 분류</label>
-                <select id="outfitCategory" onchange="toggleOutfitOptions()">
-                    <option value="school">🏫 교복 스타일 (스쿨룩)</option>
-                    <option value="suit">👔 비즈니스 수트 (커스텀 설정)</option>
-                    <option value="lab">연구원 가운</option>
-                    <option value="sci-fi">사이버 네온 슈트</option>
-                    <option value="casual">후드티와 청바지</option>
+                <label>복장 스타일 (성별 반응형 10가지)</label>
+                <select id="outfitCategory" onchange="handleOutfitChange()">
+                    <!-- JS로 동적 채움 -->
                 </select>
             </div>
 
-            <!-- 정장 세부 커스텀 영역 -->
-            <div id="suitCustomArea" class="suit-custom-box" style="display:none;">
-                <div class="title">👔 정장 상세 조합</div>
-                <div class="checkbox-group">
-                    <label class="checkbox-item"><input type="checkbox" id="chkWhiteJacket" onchange="handleSuitCheck('jacket', 'white')"> 흰색 재킷</label>
-                    <label class="checkbox-item"><input type="checkbox" id="chkBlackJacket" checked onchange="handleSuitCheck('jacket', 'black')"> 검은색 재킷</label>
-                    <label class="checkbox-item"><input type="checkbox" id="chkWhiteShirt" onchange="handleSuitCheck('shirt', 'white')"> 흰색 셔츠</label>
-                    <label class="checkbox-item"><input type="checkbox" id="chkBlackShirt" checked onchange="handleSuitCheck('shirt', 'black')"> 검은색 셔츠</label>
-                    <label class="checkbox-item"><input type="checkbox" id="chkTie" onchange="toggleTieColor()"> 넥타이 착용</label>
-                    <div style="grid-column: span 1;">
-                        <select id="tieColor" disabled onchange="generatePrompt()" style="padding:0.25rem 0.4rem; font-size:0.75rem;">
-                            <option value="bright yellow">노란색 타이</option>
-                            <option value="green striped">초록 스트라이프 타이</option>
-                            <option value="red">빨간색 타이</option>
-                            <option value="navy blue">네이비 타이</option>
-                            <option value="black">검은색 타이</option>
-                        </select>
-                    </div>
+            <div class="form-group">
+                <label>의상 메인 컬러 (Main Outfit Color)</label>
+                <select id="outfitColor" onchange="generatePrompt()">
+                    <option value="dark navy and white">네이비 & 화이트 (Navy & White)</option>
+                    <option value="sleek black and silver accents">블랙 & 실버 (Black & Silver)</option>
+                    <option value="pure white and pastel blue">화이트 & 파스텔 블루</option>
+                    <option value="crimson red and gold accents">크림슨 레드 & 골드</option>
+                    <option value="emerald green and beige">에메랄드 그린 & 베이지</option>
+                    <option value="soft pink and cream white">소프트 핑크 & 크림 화이트</option>
+                    <option value="classic beige and brown tone">클래식 베이지 & 브라운</option>
+                    <option value="vibrant neon cyan and magenta">네온 시안 & 마젠타</option>
+                </select>
+            </div>
+
+            <div id="recommendNotice" class="recommend-badge">
+                💡 추천 악세사리가 복장에 따라 자동 선택됩니다.
+            </div>
+        </div>
+
+        <!-- 3. 악세사리 (체크박스 + 콤보박스 활성화 + 자동 추천) -->
+        <div class="card">
+            <h2>3. 외관 & 악세사리</h2>
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.2rem;">체크박스 선택 시 관련 세부 옵션이 활성화됩니다.</p>
+            
+            <div class="acc-grid">
+                <!-- 모자 -->
+                <div class="acc-item">
+                    <label><input type="checkbox" id="accHatChk" onchange="toggleAccSelect('accHat')"> 🧢 모자</label>
+                    <select id="accHat" disabled onchange="generatePrompt()">
+                        <option value="stylish beret">베레모 (Beret)</option>
+                        <option value="trendy baseball cap">야구 모자 (Baseball Cap)</option>
+                        <option value="cozy beanie">비니 (Beanie)</option>
+                        <option value="classic fedora hat">페도라 (Fedora)</option>
+                        <option value="sun bucket hat">버킷햇 (Bucket Hat)</option>
+                    </select>
+                </div>
+                <!-- 안경 -->
+                <div class="acc-item">
+                    <label><input type="checkbox" id="accGlassesChk" onchange="toggleAccSelect('accGlasses')"> 👓 안경</label>
+                    <select id="accGlasses" disabled onchange="generatePrompt()">
+                        <option value="stylish round wire-rimmed glasses">동글이 금테 안경</option>
+                        <option value="chic black thick-rimmed glasses">검은색 뿔테 안경</option>
+                        <option value="trendy tinted sunglasses">선글라스 (Sunglasses)</option>
+                        <option value="sleek futuristic visor glasses">고글/사이버 비저</option>
+                    </select>
+                </div>
+                <!-- 넥타이 / 리본 -->
+                <div class="acc-item">
+                    <label><input type="checkbox" id="accTieChk" onchange="toggleAccSelect('accTie')"> 👔 넥타이</label>
+                    <select id="accTie" disabled onchange="generatePrompt()">
+                        <option value="green striped tie">초록 스트라이프 넥타이</option>
+                        <option value="classic red necktie">클래식 레드 넥타이</option>
+                        <option value="cute ribbon bowtie">귀여운 리본 타이</option>
+                        <option value="sleek black slim tie">블랙 슬림 넥타이</option>
+                    </select>
+                </div>
+                <!-- 귀걸이 -->
+                <div class="acc-item">
+                    <label><input type="checkbox" id="accEarringChk" onchange="toggleAccSelect('accEarring')"> 💎 귀걸이</label>
+                    <select id="accEarring" disabled onchange="generatePrompt()">
+                        <option value="subtle silver hoop earrings">실버 링 귀걸이</option>
+                        <option value="sparkling diamond stud earrings">다이아몬드 스터드 귀걸이</option>
+                        <option value="stylish dangling drop earrings">드롭 드렁크 귀걸이</option>
+                    </select>
+                </div>
+                <!-- 목걸이 -->
+                <div class="acc-item">
+                    <label><input type="checkbox" id="accNecklaceChk" onchange="toggleAccSelect('accNecklace')"> 📿 목걸이</label>
+                    <select id="accNecklace" disabled onchange="generatePrompt()">
+                        <option value="delicate gold pendant necklace">골드 펜던트 목걸이</option>
+                        <option value="chic black leather choker">블랙 가죽 초커</option>
+                        <option value="layering chain necklace">레이어드 체인 목걸이</option>
+                    </select>
+                </div>
+                <!-- 기타 (가방, 헤드폰 등) -->
+                <div class="acc-item">
+                    <label><input type="checkbox" id="accExtraChk" onchange="toggleAccSelect('accExtra')"> 🎧 소품</label>
+                    <select id="accExtra" disabled onchange="generatePrompt()">
+                        <option value="stylish over-ear wireless headphones">무선 헤드폰 (Headphones)</option>
+                        <option value="leather backpack over one shoulder">가죽 백팩</option>
+                        <option value="smart watch on wrist">스마트 워치</option>
+                        <option value="beach straw tote bag">비치 짚가방</option>
+                    </select>
                 </div>
             </div>
-
-            <div class="form-group" style="margin-top:0.75rem;">
-                <label>캐릭터 포즈</label>
-                <select id="pose" onchange="generatePrompt()">
-                    <option value="T-pose standing straight with arms outstretched horizontally">정면 T-자세 (T-pose)</option>
-                    <option value="perfect A-pose standing straight with arms angled downwards">정면 A-자세 (A-pose)</option>
-                    <option value="confident standing pose with one hand waving hello">인사하는 자세</option>
-                    <option value="sitting thoughtfully at a desk with a computer">책상에 앉은 자세</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>배경 환경</label>
-                <select id="background" onchange="generatePrompt()">
-                    <option value="clean solid pure white background">단색 순백색 (Solid White)</option>
-                    <option value="clean solid light gray studio background">연회색 스튜디오</option>
-                    <option value="transparent style simple clean background">투명 스타일 배경</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>조명 연출</label>
-                <select id="lighting" onchange="generatePrompt()">
-                    <option value="soft balanced lighting, clean sprite colors">부드러운 스프라이트 조명</option>
-                    <option value="vibrant neon glow lighting">화려한 네온 조명</option>
-                    <option value="soft studio lighting, bright character concept art setup">스튜디오 조명</option>
-                </select>
-            </div>
         </div>
 
-        <!-- 3. MBTI 성격 설정 -->
+        <!-- 4. 표정 / 감정 & 포즈 (표정 8가지, 포즈 20가지) -->
         <div class="card">
-            <h2>3. MBTI 성격 설정</h2>
-            <div class="mbti-grid">
-                <button class="mbti-btn" onclick="selectMBTI('INTJ', this)">INTJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('INTP', this)">INTP</button>
-                <button class="mbti-btn" onclick="selectMBTI('ENTJ', this)">ENTJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('ENTP', this)">ENTP</button>
-                <button class="mbti-btn" onclick="selectMBTI('INFJ', this)">INFJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('INFP', this)">INFP</button>
-                <button class="mbti-btn" onclick="selectMBTI('ENFJ', this)">ENFJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('ENFP', this)">ENFP</button>
-                <button class="mbti-btn active" onclick="selectMBTI('ISTJ', this)">ISTJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('ISFJ', this)">ISFJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('ESTJ', this)">ESTJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('ESFJ', this)">ESFJ</button>
-                <button class="mbti-btn" onclick="selectMBTI('ISTP', this)">ISTP</button>
-                <button class="mbti-btn" onclick="selectMBTI('ISFP', this)">ISFP</button>
-                <button class="mbti-btn" onclick="selectMBTI('ESTP', this)">ESTP</button>
-                <button class="mbti-btn" onclick="selectMBTI('ESFP', this)">ESFP</button>
+            <h2>4. 표정 & 포즈 설정</h2>
+            <div class="form-group">
+                <label>기분 / 표정 (8가지 감정)</label>
+                <select id="emotion" onchange="generatePrompt()">
+                    <option value="cheerful bright smile with sparkling friendly eyes">😊 기쁨/밝은 미소 (Cheerful Smile)</option>
+                    <option value="calm, serious, highly disciplined and focused expression">😐 차분함/진지함 (Calm & Serious)</option>
+                    <option value="confident subtle smirk with playful charismatic gaze">지신감/자만 (Confident Smirk)</option>
+                    <option value="shy embarrassed expression with slight blush on cheeks">😳 쑥스러움/홍조 (Shy Blush)</option>
+                    <option value="curious wide-eyed surprised look with slightly open lips">😲 호기심/놀람 (Curious Surprised)</option>
+                    <option value="pouting cute mischievous face with folded eyebrows">😜 장난기/뾰퉁함 (Mischievous Pout)</option>
+                    <option value="gentle empathetic warm modest smile">🌿 온화함/다정함 (Gentle Warm Smile)</option>
+                    <option value="cool, indifferent, cold distant look with sharp eyes">😎 쿨함/시크함 (Cool & Distant)</option>
+                </select>
             </div>
-            <div class="mbti-desc" id="mbtiDesc"></div>
-        </div>
-    </div>
 
-    <!-- 4. 이미지 품질 설정 -->
-    <div class="card bottom-card">
-        <h2>4. 이미지 품질 및 그래픽 설정</h2>
-        <div class="form-group">
-            <select id="quality" onchange="generatePrompt()">
-                <option value="crisp pixel lines, precise pixel art grids, no blur, text-free, pure character design">도트/픽셀 그래픽 최적화 (선명한 픽셀 라인)</option>
-                <option value="text-free requirement, no random letters, no typography, pure graphic only, high resolution, highly detailed character design">텍스트 완전 배제 + 고화질 디테일</option>
-                <option value="masterpiece, best quality, highly detailed, sharp focus, 8k resolution, text-free">마스터피스 최고 품질</option>
-            </select>
+            <div class="form-group">
+                <label>포즈 (20가지 옵션)</label>
+                <select id="pose" onchange="generatePrompt()">
+                    <!-- 기본 / 정방향 포즈 -->
+                    <option value="T-pose standing straight with arms outstretched horizontally">01. 정면 T-자세 (T-pose)</option>
+                    <option value="perfect A-pose standing straight with arms angled downwards">02. 정면 A-자세 (A-pose)</option>
+                    <option value="confident standing pose with hands on hips">03. 손 허리에 얹은 당당한 포즈</option>
+                    <option value="friendly standing pose with one hand waving hello">04. 한 손으로 인사하는 포즈</option>
+                    <option value="peace sign pose near eye with cheerful wink">05. V(피스) 포즈 & 윙크</option>
+                    <!-- 액티브 / 걸어가는 포즈 -->
+                    <option value="dynamic walking pose looking towards camera">06. 가볍게 걸어오는 포즈</option>
+                    <option value="playful jumping pose in mid-air with joyful energy">07. 점프하는 활기찬 포즈</option>
+                    <option value="arms crossed over chest with confident posture">08. 팔짱 끼고 서 있는 포즈</option>
+                    <option value="one hand gently touching chin in thoughtful pose">09. 턱에 손을 얹고 생각하는 포즈</option>
+                    <option value="pointing finger forward with energetic expression">10. 정면을 손가락으로 가리키는 포즈</option>
+                    <!-- 앉은 자세 / 대기 포즈 -->
+                    <option value="sitting comfortably on a chair leaning forward">11. 의자에 앉아 몸을 앞 기울인 포즈</option>
+                    <option value="sitting thoughtfully at a desk with laptop">12. 책상 앞에 앉아 작업하는 포즈</option>
+                    <option value="sitting on ground with knees hugged close">13. 무릎을 끌어안고 앉은 포즈</option>
+                    <option value="leaning casually against a clean wall with one leg crossed">14. 벽에 툭 기대어 서 있는 포즈</option>
+                    <option value="adjusting glasses with one finger in intelligent pose">15. 손가락으로 안경 올리는 포즈</option>
+                    <!-- 특수 / 수영복 / 비치 / 액션 포즈 -->
+                    <option value="sunbathing relaxation pose lying gently on beach towel">16. 선베드/타월에 누워 휴식하는 포즈</option>
+                    <option value="holding a cold drink with both hands near chest">17. 두 손으로 음료수 컵을 든 포즈</option>
+                    <option value="running lightly with hair fluttering in wind">18. 바람을 가르며 가볍게 뛰는 포즈</option>
+                    <option value="dynamic action combat stance ready for action">19. 다이내믹 전투/액션 준비 포즈</option>
+                    <option value="looking back over shoulder with charming gaze">20. 뒤돌아보는 매혹적인 포즈</option>
+                </select>
+            </div>
+
+            <!-- MBTI 빠른 적용 -->
+            <div class="form-group" style="margin-top:0.3rem;">
+                <label>MBTI 성격 반영 (빠른 감정 적용)</label>
+                <div class="mbti-grid">
+                    <button class="mbti-btn" onclick="selectMBTI('INTJ', this)">INTJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('INTP', this)">INTP</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ENTJ', this)">ENTJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ENTP', this)">ENTP</button>
+                    <button class="mbti-btn" onclick="selectMBTI('INFJ', this)">INFJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('INFP', this)">INFP</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ENFJ', this)">ENFJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ENFP', this)">ENFP</button>
+                    <button class="mbti-btn active" onclick="selectMBTI('ISTJ', this)">ISTJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ISFJ', this)">ISFJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ESTJ', this)">ESTJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ESFJ', this)">ESFJ</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ISTP', this)">ISTP</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ISFP', this)">ISFP</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ESTP', this)">ESTP</button>
+                    <button class="mbti-btn" onclick="selectMBTI('ESFP', this)">ESFP</button>
+                </div>
+                <div class="mbti-desc" id="mbtiDesc"></div>
+            </div>
+        </div>
+
+        <!-- 5. 배경 & 구도 (배경 10가지+직접입력, 구도 10가지) -->
+        <div class="card">
+            <h2>5. 배경 & 구도 설정</h2>
+            
+            <div class="form-group">
+                <label>배경 장소 (10가지 + 커스텀)</label>
+                <select id="background" onchange="handleBackgroundChange()">
+                    <option value="clean solid pure white background">01. 단색 순백색 (Solid White)</option>
+                    <option value="clean solid light gray studio background">02. 연회색 스튜디오 (Gray Studio)</option>
+                    <option value="sunny tropical resort beach with crystal clear turquoise ocean and palm trees">03. 트로피컬 리조트 해변 (Beach & Ocean)</option>
+                    <option value="modern high school classroom with sunlight shining through windows">04. 따스한 고등학교 교실 (Classroom)</option>
+                    <option value="futuristic cyberpunk neon-lit city street at night with glowing signs">05. 사이버펑크 네온 도시 (Cyberpunk City)</option>
+                    <option value="cozy coffee shop interior with warm wooden decor and soft lights">06. 따뜻한 우드톤 카페 내부 (Cafe Interior)</option>
+                    <option value="lush green sunlit forest park with blooming cherry blossoms">07. 벚꽃이 가득한 햇살 공원 (Cherry Blossom Park)</option>
+                    <option value="high-tech laboratory background with glowing holographic displays">08. 최첨단 연구실 (Tech Lab)</option>
+                    <option value="luxurious illuminated performance stage with floor reflections">09. 화려한 무대 조명과 반사 바닥 (Stage)</option>
+                    <option value="transparent style simple minimalistic backdrop">10. 투명 미니멀리즘 배경 (Minimalist)</option>
+                    <option value="Custom">직접 입력 (Custom Background)</option>
+                </select>
+                <input type="text" id="customBackground" placeholder="e.g. cozy library with warm lighting" style="display:none; margin-top:0.3rem;" oninput="generatePrompt()">
+            </div>
+
+            <div class="form-group">
+                <label>카메라 구도/앵글 (10가지)</label>
+                <select id="cameraAngle" onchange="generatePrompt()">
+                    <option value="full body shot, full character view from head to toe">01. 전신 샷 (Full Body Shot)</option>
+                    <option value="medium shot, upper body character view">02. 상반신 미디엄 샷 (Medium Shot)</option>
+                    <option value="close-up portrait shot, focusing on facial expression and details">03. 바스트/클로즈업 초상화 (Close-Up Portrait)</option>
+                    <option value="front orthographic view character sheet style">04. 정면 직교 뷰 (Front Orthographic)</option>
+                    <option value="dynamic low angle shot looking up at character">05. 로우 앵글 (Low Angle Shot)</option>
+                    <option value="high angle shot looking down from above">06. 하이 앵글 / 뷰티 샷 (High Angle)</option>
+                    <option value="three-quarter side angle view">07. 3/4 측면 구도 (Three-Quarter View)</option>
+                    <option value="dramatic cinematic wide angle camera setup">08. 시네마틱 와이드 앵글 (Wide Angle)</option>
+                    <option value="eye-level camera view with shallow depth of field">09. 아이레벨 + 아웃포커싱 (Eye-Level Bokeh)</option>
+                    <option value="isometric 3D perspective camera layout">10. 아이소메트릭 입체 구도 (Isometric View)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>조명 연출 (Lighting Setup)</label>
+                <select id="lighting" onchange="generatePrompt()">
+                    <option value="soft balanced studio lighting, clean sprite colors">부드러운 스튜디오 조명</option>
+                    <option value="vibrant neon glow lighting with colorful reflections">화려한 네온 글레이즈 조명</option>
+                    <option value="dramatic cinematic rim lighting with soft shadows">드라마틱 림 라이팅</option>
+                    <option value="warm natural golden hour sunlight from side window">따스한 골든아워 자연광</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 6. 품질 & 기술 설정 (10가지 옵션) -->
+        <div class="card">
+            <h2>6. 품질 & 기술 설정</h2>
+            <div class="form-group">
+                <label>그래픽/품질 렌더링 옵션 (10가지)</label>
+                <select id="quality" onchange="generatePrompt()">
+                    <option value="crisp pixel lines, precise pixel art grids, sharp edges, no blur, text-free, pure character design">01. 픽셀아트 최적화 (선명한 도트/그리드)</option>
+                    <option value="text-free requirement, no typography, pure graphic only, high resolution, highly detailed character design">02. 텍스트 완전 배제 + 고화질 디테일 (추천)</option>
+                    <option value="masterpiece, best quality, highly detailed, sharp focus, 8k resolution, photorealistic textures">03. 마스터피스 8K 선명 포커스</option>
+                    <option value="clean vector graphic, smooth shading, precise clean lines, SVG style">04. 매끈한 벡터 그래픽 (Clean Vector)</option>
+                    <option value="unreal engine 5 render, octane render, raytracing, ultra realistic lighting">05. 언리얼 엔진 5 / 옥테인 레이트레이싱</option>
+                    <option value="anime key visual style, crisp cel-shaded lines, vibrant artwork">06. 애니메이션 키비주얼 셀셰이딩</option>
+                    <option value="soft focus digital painting, fine stroke textures, artistic masterpiece">07. 디지탈 페인팅 질감 (Digital Painting)</option>
+                    <option value="vray render, soft volumetric light, studio concept art quality">08. V-Ray 스튜디오 콘셉트 아트</option>
+                    <option value="sharp game sprite sheet standard, clean outline, transparent background ready">09. 게임 스프라이트 규격 (Clean Outline)</option>
+                    <option value="cinematic movie poster quality, dramatic contrast, exquisite details">10. 영화 포스터급 극적인 명암 (Movie Poster)</option>
+                </select>
+            </div>
         </div>
     </div>
 
     <!-- 최종 영문 프롬프트 출력 영역 -->
     <div class="output-section">
         <div class="output-header">
-            <h2>완성된 영문 프롬프트 (English Prompt)</h2>
-            <button class="btn-copy" onclick="copyPrompt()">복사하기 (Copy)</button>
+            <h2>완성된 영문 프롬프트 (Generated English Prompt)</h2>
+            <button class="btn-copy" onclick="copyPrompt()">복사하기 (Copy Prompt)</button>
         </div>
         <textarea id="promptResult" readonly></textarea>
     </div>
 </div>
 
 <script>
+    // MBTI 데이터 매핑
     const mbtiMap = {
-        "INTJ": { trait: "expressing a calm, strategic, highly sharp and intellectual expression", desc: "🧠 INTJ: 냉철하고 전략적이며 지적인 분위기" },
-        "INTP": { trait: "expressing a curious and thoughtful aura, subtle intelligent smile, analytical vibe", desc: "💡 INTP: 호기심 많고 탐구적이며 분석적인 분위기" },
-        "ENTJ": { trait: "expressing a charismatic, sharp, determined, and leader-like stance", desc: "👑 ENTJ: 카리스마 있고 결단력 넘치는 리더 분위기" },
-        "ENTP": { trait: "expressing a witty, confident, highly energetic and mischievous expression", desc: "⚡ ENTP: 위트 있고 자신감 넘치며 에너제틱한 분위기" },
-        "INFJ": { trait: "expressing a gentle, empathetic, warm, and deeply insightful expression", desc: "🌿 INFJ: 차분하고 통찰력 있으며 온화한 분위기" },
-        "INFP": { trait: "expressing a dreamy, artistic, gentle, and quiet emotional expression", desc: "🎨 INFP: 꿈꾸는 듯하고 감성적이며 온화한 분위기" },
-        "ENFJ": { trait: "expressing an inspiring, warm, encouraging, and friendly posture", desc: "🌟 ENFJ: 사기 증진을 돕고 열정적이며 따뜻한 분위기" },
-        "ENFP": { trait: "expressing a joyful, bright, highly expressive and enthusiastic vibe", desc: "🎈 ENFP: 재기발랄하고 생기 넘치며 열정적인 분위기" },
-        "ISTJ": { trait: "expressing a neat, highly disciplined, serious, and trustworthy demeanor", desc: "📐 ISTJ: 단정하고 원칙적이며 신뢰감 있는 분위기" },
-        "ISFJ": { trait: "expressing a calm, kind, protective, and warm modest smile", desc: "🛡️ ISFJ: 헌신적이고 친절하며 다정한 분위기" },
-        "ESTJ": { trait: "expressing an organized, confident, authoritative, and neat impression", desc: "📊 ESTJ: 체계적이고 확신에 찬 보스 분위기" },
-        "ESFJ": { trait: "expressing a friendly, sociable, bright, and welcoming expression", desc: "🤝 ESFJ: 친근하고 사교적이며 환하게 웃는 분위기" },
-        "ISTP": { trait: "expressing a relaxed, cool, practical, and highly focused look", desc: "🛠️ ISTP: 쿨하고 실용적이며 무심한 듯 집중하는 분위기" },
-        "ISFP": { trait: "expressing a peaceful, artistic, calm, and sensitive expression", desc: "🍃 ISFP: 온화하고 예술적이며 자유로운 분위기" },
-        "ESTP": { trait: "expressing a bold, active, thrill-seeking, and confident smirk", desc: "🏎️ ESTP: 모험심 넘치고 대담하며 자신감 넘치는 분위기" },
-        "ESFP": { trait: "expressing a playful, charming, spontaneous, and lively expression", desc: "🎉 ESFP: 흥미진진하고 매력적이며 활기찬 분위기" }
+        "INTJ": { emotion: "calm, serious, highly disciplined and focused expression", desc: "🧠 INTJ: 냉철하고 전략적이며 지적인 분위기" },
+        "INTP": { emotion: "curious wide-eyed surprised look with slightly open lips", desc: "💡 INTP: 호기심 많고 탐구적이며 분석적인 분위기" },
+        "ENTJ": { emotion: "confident subtle smirk with playful charismatic gaze", desc: "👑 ENTJ: 카리스마 있고 결단력 넘치는 리더 분위기" },
+        "ENTP": { emotion: "pouting cute mischievous face with folded eyebrows", desc: "⚡ ENTP: 위트 있고 자신감 넘치며 에너제틱한 분위기" },
+        "INFJ": { emotion: "gentle empathetic warm modest smile", desc: "🌿 INFJ: 차분하고 통찰력 있으며 온화한 분위기" },
+        "INFP": { emotion: "shy embarrassed expression with slight blush on cheeks", desc: "🎨 INFP: 꿈꾸는 듯하고 감성적이며 온화한 분위기" },
+        "ENFJ": { emotion: "cheerful bright smile with sparkling friendly eyes", desc: "🌟 ENFJ: 사기 증진을 돕고 열정적이며 따뜻한 분위기" },
+        "ENFP": { emotion: "cheerful bright smile with sparkling friendly eyes", desc: "🎈 ENFP: 재기발랄하고 생기 넘치며 열정적인 분위기" },
+        "ISTJ": { emotion: "calm, serious, highly disciplined and focused expression", desc: "📐 ISTJ: 단정하고 원칙적이며 신뢰감 있는 분위기" },
+        "ISFJ": { emotion: "gentle empathetic warm modest smile", desc: "🛡️ ISFJ: 헌신적이고 친절하며 다정한 분위기" },
+        "ESTJ": { emotion: "calm, serious, highly disciplined and focused expression", desc: "📊 ESTJ: 체계적이고 확신에 찬 보스 분위기" },
+        "ESFJ": { emotion: "cheerful bright smile with sparkling friendly eyes", desc: "🤝 ESFJ: 친근하고 사교적이며 환하게 웃는 분위기" },
+        "ISTP": { emotion: "cool, indifferent, cold distant look with sharp eyes", desc: "🛠️ ISTP: 쿨하고 실용적이며 무심한 듯 집중하는 분위기" },
+        "ISFP": { emotion: "gentle empathetic warm modest smile", desc: "🍃 ISFP: 온화하고 예술적이며 자유로운 분위기" },
+        "ESTP": { emotion: "confident subtle smirk with playful charismatic gaze", desc: "🏎️ ESTP: 모험심 넘치고 대담하며 자신감 넘치는 분위기" },
+        "ESFP": { emotion: "pouting cute mischievous face with folded eyebrows", desc: "🎉 ESFP: 흥미진진하고 매력적이며 활기찬 분위기" }
+    };
+
+    // 남/여 복장 목록 (각 10가지, 수영복 포함)
+    const outfitOptionsMap = {
+        female: [
+            { val: "school", text: "🏫 교복 스쿨룩 (Navy Blazer & Skirt)" },
+            { val: "swimwear_onepiece", text: "🏊 수영복 - 원피스 (Classic One-Piece Swimsuit)" },
+            { val: "swimwear_bikini", text: "👙 수영복 - 비키니 (Stylish Two-Piece Bikini)" },
+            { val: "suit", text: "👔 비즈니스 수트 (Elegance Pantsuit)" },
+            { val: "casual_hoodie", text: "🧥 캐주얼 - 후드티 & 데님 (Hoodie & Jeans)" },
+            { val: "summer_dress", text: "👗 여름 원피스 (Flowy Summer Sundress)" },
+            { val: "lab", text: "🥼 연구원 가운 (White Lab Coat & Blouse)" },
+            { val: "cyberpunk_armor", text: "🦾 사이버펑크 네온 슈트 (Cyberpunk Suit)" },
+            { val: "sports_athletic", text: "👟 스포츠 웨어 (Athletic Crop Top & Leggings)" },
+            { val: "fantasy_dress", text: "👑 판타지 드레스 (Magical Fantasy Robe/Dress)" }
+        ],
+        male: [
+            { val: "school", text: "🏫 교복 스쿨룩 (Navy Blazer & Trousers)" },
+            { val: "swimwear_trunks", text: "🏊 수영복 - 스위밍 트렁크 (Beach Swim Trunks)" },
+            { val: "swimwear_rashguard", text: "🏄 수영복 - 래쉬가드 & 쇼츠 (Rash Guard Set)" },
+            { val: "suit", text: "👔 비즈니스 수트 (Sleek Black Business Suit)" },
+            { val: "casual_hoodie", text: "🧥 캐주얼 - 스트릿 후드티 (Streetwear Hoodie)" },
+            { val: "casual_shirt", text: "👕 리넨 셔츠 & 슬랙스 (Linen Shirt & Slacks)" },
+            { val: "lab", text: "🥼 연구원 가운 (White Lab Coat & Tie)" },
+            { val: "cyberpunk_armor", text: "🦾 사이버펑크 아머 (Cyberpunk Tactical Armor)" },
+            { val: "sports_athletic", text: "👟 트레이닝 복 (Sporty Gym Hoodie & Joggers)" },
+            { val: "fantasy_armor", text: "⚔️ 판타지 기사 갑옷 (Fantasy Knight Armor)" }
+        ],
+        "gender-neutral": [
+            { val: "school", text: "🏫 클래식 스쿨 유니폼 (Uniform Blazer)" },
+            { val: "swimwear_rashguard", text: "🏊 수영복 - 서핑 래쉬가드 (Surfing Rash Guard)" },
+            { val: "suit", text: "👔 모던 젠더리스 수트 (Gender-neutral Suit)" },
+            { val: "casual_hoodie", text: "🧥 편안한 오버핏 후드티 (Overfit Hoodie)" },
+            { val: "lab", text: "🥼 연구원 가운 (Professional Lab Coat)" },
+            { val: "cyberpunk_armor", text: "🦾 사이버 택티컬 슈트 (Tactical Cyber Suit)" }
+        ]
     };
 
     let selectedMBTI = "ISTJ";
 
-    function toggleOutfitOptions() {
-        const category = document.getElementById('outfitCategory').value;
-        const suitArea = document.getElementById('suitCustomArea');
-        suitArea.style.display = (category === 'suit') ? 'block' : 'none';
+    // 성별 변경 시 복장 옵션 재구성
+    function handleGenderChange() {
+        const gender = document.getElementById('gender').value;
+        const outfitSelect = document.getElementById('outfitCategory');
+        outfitSelect.innerHTML = "";
+
+        const options = outfitOptionsMap[gender] || outfitOptionsMap.female;
+        options.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt.val;
+            el.textContent = opt.text;
+            outfitSelect.appendChild(el);
+        });
+
+        autoRecommendAccessories();
         generatePrompt();
     }
 
-    function handleSuitCheck(type, color) {
-        if (type === 'jacket') {
-            if (color === 'white') document.getElementById('chkBlackJacket').checked = !document.getElementById('chkWhiteJacket').checked;
-            if (color === 'black') document.getElementById('chkWhiteJacket').checked = !document.getElementById('chkBlackJacket').checked;
-        } else if (type === 'shirt') {
-            if (color === 'white') document.getElementById('chkBlackShirt').checked = !document.getElementById('chkWhiteShirt').checked;
-            if (color === 'black') document.getElementById('chkWhiteShirt').checked = !document.getElementById('chkBlackShirt').checked;
+    // 나이 드롭다운 변경 처리
+    function handleAgeChange() {
+        const val = document.getElementById('ageGroup').value;
+        const customInput = document.getElementById('customAge');
+        customInput.style.display = (val === 'Custom') ? 'block' : 'none';
+        generatePrompt();
+    }
+
+    // 배경 드롭다운 변경 처리
+    function handleBackgroundChange() {
+        const val = document.getElementById('background').value;
+        const customInput = document.getElementById('customBackground');
+        customInput.style.display = (val === 'Custom') ? 'block' : 'none';
+        generatePrompt();
+    }
+
+    // 악세사리 체크박스 토글
+    function toggleAccSelect(selectId) {
+        const chk = document.getElementById(selectId + 'Chk');
+        const select = document.getElementById(selectId);
+        select.disabled = !chk.checked;
+        generatePrompt();
+    }
+
+    // 복장에 따른 악세사리 자동 추천 체크 기능 (조건 4)
+    function handleOutfitChange() {
+        autoRecommendAccessories();
+        generatePrompt();
+    }
+
+    function autoRecommendAccessories() {
+        const outfit = document.getElementById('outfitCategory').value;
+        
+        // 모든 악세사리 초기화
+        ['accHat', 'accGlasses', 'accTie', 'accEarring', 'accNecklace', 'accExtra'].forEach(id => {
+            document.getElementById(id + 'Chk').checked = false;
+            document.getElementById(id).disabled = true;
+        });
+
+        // 복장별 자동 추천 로직
+        if (outfit === 'school') {
+            setAcc('accTieChk', 'accTie', 'green striped tie');
+            setAcc('accExtraChk', 'accExtra', 'leather backpack over one shoulder');
+        } else if (outfit.includes('swimwear')) {
+            setAcc('accGlassesChk', 'accGlasses', 'trendy tinted sunglasses');
+            setAcc('accHatChk', 'accHat', 'sun bucket hat');
+            setAcc('accExtraChk', 'accExtra', 'beach straw tote bag');
+        } else if (outfit === 'suit') {
+            setAcc('accTieChk', 'accTie', 'sleek black slim tie');
+            setAcc('accExtraChk', 'accExtra', 'smart watch on wrist');
+        } else if (outfit === 'casual_hoodie') {
+            setAcc('accExtraChk', 'accExtra', 'stylish over-ear wireless headphones');
+            setAcc('accHatChk', 'accHat', 'trendy baseball cap');
+        } else if (outfit === 'summer_dress') {
+            setAcc('accHatChk', 'accHat', 'stylish beret');
+            setAcc('accNecklaceChk', 'accNecklace', 'delicate gold pendant necklace');
+        } else if (outfit === 'lab') {
+            setAcc('accGlassesChk', 'accGlasses', 'stylish round wire-rimmed glasses');
         }
-        generatePrompt();
     }
 
-    function toggleTieColor() {
-        const hasTie = document.getElementById('chkTie').checked;
-        document.getElementById('tieColor').disabled = !hasTie;
-        generatePrompt();
+    function setAcc(chkId, selectId, val) {
+        document.getElementById(chkId).checked = true;
+        const sel = document.getElementById(selectId);
+        sel.disabled = false;
+        sel.value = val;
     }
 
+    // MBTI 버튼 선택
     function selectMBTI(code, btnElement) {
         selectedMBTI = code;
         document.querySelectorAll('.mbti-btn').forEach(btn => btn.classList.remove('active'));
         btnElement.classList.add('active');
         document.getElementById('mbtiDesc').innerText = mbtiMap[code].desc;
+        
+        // 표정 드롭다운 자동 연동
+        document.getElementById('emotion').value = mbtiMap[code].emotion;
         generatePrompt();
     }
 
-    function buildOutfitPrompt() {
-        const category = document.getElementById('outfitCategory').value;
+    // 복장 프롬프트 빌더
+    function buildOutfitString() {
+        const outfit = document.getElementById('outfitCategory').value;
+        const color = document.getElementById('outfitColor').value;
         const gender = document.getElementById('gender').value;
 
-        if (category === 'school') {
-            if (gender === 'female') {
-                return "a modern high school uniform with a dark navy blazer, white collared shirt, green striped tie, grey pleated skirt, black knee-high socks, and black loafers";
-            } else {
-                return "a modern high school uniform with a dark navy blazer, white collared shirt, green striped tie, grey dress trousers, and black leather shoes";
-            }
-        } else if (category === 'suit') {
-            const isWhiteJacket = document.getElementById('chkWhiteJacket').checked;
-            const isWhiteShirt = document.getElementById('chkWhiteShirt').checked;
-            const hasTie = document.getElementById('chkTie').checked;
-            const tieColor = document.getElementById('tieColor').value;
-
-            let jacketStr = isWhiteJacket ? "a neat white blazer formal suit" : "a sleek dark navy/black formal suit";
-            let shirtStr = isWhiteShirt ? "with a crisp white shirt" : "with a dark black shirt";
-            let tieStr = hasTie ? `, and a ${tieColor} tie` : ", no tie, modern open-collar style";
-
-            return `${jacketStr} ${shirtStr}${tieStr}`;
-        } else if (category === 'lab') {
-            return "a white lab coat over a casual shirt with various stationery in pocket";
-        } else if (category === 'sci-fi') {
-            return "futuristic sci-fi neon armor suit";
-        } else if (category === 'casual') {
-            return "casual hoodie and comfortable jeans";
+        let outfitText = "";
+        if (outfit === 'school') {
+            outfitText = gender === 'female' 
+                ? `modern high school uniform with blazer, skirt, knee socks in ${color}`
+                : `modern high school uniform with blazer, shirt and trousers in ${color}`;
+        } else if (outfit === 'swimwear_onepiece') {
+            outfitText = `stylish elegant one-piece swimsuit in ${color}`;
+        } else if (outfit === 'swimwear_bikini') {
+            outfitText = `trendy two-piece beach bikini swimsuit in ${color}`;
+        } else if (outfit === 'swimwear_trunks') {
+            outfitText = `casual beach swim shorts trunks in ${color}`;
+        } else if (outfit === 'swimwear_rashguard') {
+            outfitText = `waterproof athletic surfing rash guard set in ${color}`;
+        } else if (outfit === 'suit') {
+            outfitText = `formal sleek business suit with fitted blazer in ${color}`;
+        } else if (outfit === 'casual_hoodie') {
+            outfitText = `comfortable trendy streetwear hoodie with jeans in ${color}`;
+        } else if (outfit === 'summer_dress') {
+            outfitText = `elegant flowy summer sundress in ${color}`;
+        } else if (outfit === 'lab') {
+            outfitText = `crisp white lab coat over casual shirt in ${color}`;
+        } else if (outfit === 'cyberpunk_armor') {
+            outfitText = `futuristic cyberpunk armor suit with glowing neon lines in ${color}`;
+        } else {
+            outfitText = `stylish outfit in ${color}`;
         }
+        return outfitText;
     }
 
+    // 악세사리 조합 프롬프트 빌더
+    function buildAccessoriesString() {
+        let list = [];
+        if (document.getElementById('accHatChk').checked) list.push(document.getElementById('accHat').value);
+        if (document.getElementById('accGlassesChk').checked) list.push(document.getElementById('accGlasses').value);
+        if (document.getElementById('accTieChk').checked) list.push(document.getElementById('accTie').value);
+        if (document.getElementById('accEarringChk').checked) list.push(document.getElementById('accEarring').value);
+        if (document.getElementById('accNecklaceChk').checked) list.push(document.getElementById('accNecklace').value);
+        if (document.getElementById('accExtraChk').checked) list.push(document.getElementById('accExtra').value);
+
+        return list.length > 0 ? "Accessories: wearing " + list.join(", ") + "." : "";
+    }
+
+    // 메인 프롬프트 생성 함수
     function generatePrompt() {
         const artStyle = document.getElementById('artStyle').value;
         const gender = document.getElementById('gender').value;
-        const ageGroup = document.getElementById('ageGroup').value;
 
-        const faceBaseSelect = document.getElementById('faceBase');
-        const customGroup = document.getElementById('customFaceGroup');
-        let faceBase = faceBaseSelect.value;
-        
-        if (faceBase === 'Custom') {
-            customGroup.style.display = 'block';
-            faceBase = document.getElementById('customFace').value || 'character face';
-        } else {
-            customGroup.style.display = 'none';
+        // 나이 처리
+        let ageStr = document.getElementById('ageGroup').value;
+        if (ageStr === 'Custom') {
+            ageStr = document.getElementById('customAge').value || 'person';
         }
 
-        const outfit = buildOutfitPrompt();
-        const pose = document.getElementById('pose').value;
-        const background = document.getElementById('background').value;
-        const lighting = document.getElementById('lighting').value;
-        const mbtiTrait = mbtiMap[selectedMBTI].trait;
-        const quality = document.getElementById('quality').value;
-
+        // 얼굴/특징 처리
         const usePhoto = document.getElementById('usePhoto').checked;
         let faceInstruction = "";
-        
         if (usePhoto) {
-            faceInstruction = "featuring the exact face and facial features from the attached reference photo";
+            faceInstruction = "featuring the exact facial features and likeness from attached reference photo";
         } else {
-            faceInstruction = `featuring ${faceBase}`;
+            const faceBaseSelect = document.getElementById('faceBase');
+            if (faceBaseSelect.value === 'Custom') {
+                faceInstruction = `featuring ${document.getElementById('customFace').value || 'character face'}`;
+            } else {
+                faceInstruction = `featuring ${faceBaseSelect.value}`;
+            }
         }
 
-        const finalPrompt = `${artStyle} of a ${gender} ${ageGroup} character ${faceInstruction}. ` +
-            `Wearing ${outfit}. ` +
+        const outfitStr = buildOutfitString();
+        const accStr = buildAccessoriesString();
+        const emotion = document.getElementById('emotion').value;
+        const pose = document.getElementById('pose').value;
+
+        // 배경 처리
+        let bgStr = document.getElementById('background').value;
+        if (bgStr === 'Custom') {
+            bgStr = document.getElementById('customBackground').value || 'clean studio background';
+        }
+
+        const cameraAngle = document.getElementById('cameraAngle').value;
+        const lighting = document.getElementById('lighting').value;
+        const quality = document.getElementById('quality').value;
+
+        // 프롬프트 결합
+        let finalPrompt = `${artStyle} of a ${gender} ${ageStr} character ${faceInstruction}. ` +
+            `Wearing ${outfitStr}. ` +
+            (accStr ? `${accStr} ` : '') +
+            `Expression & Emotion: ${emotion}. ` +
             `Pose: ${pose}. ` +
-            `Background: ${background}. ` +
-            `Lighting & Vibe: ${lighting}, ${mbtiTrait}. ` +
-            `Details: ${quality}.`;
+            `Shot & Camera: ${cameraAngle}. ` +
+            `Background: ${bgStr}. ` +
+            `Lighting: ${lighting}. ` +
+            `Quality & Specs: ${quality}.`;
 
         document.getElementById('promptResult').value = finalPrompt;
     }
@@ -577,10 +897,11 @@
         const textarea = document.getElementById('promptResult');
         textarea.select();
         document.execCommand('copy');
-        alert('프롬프트가 클립보드에 복사되었습니다!');
+        alert('영문 프롬프트가 클립보드에 복사되었습니다!');
     }
 
     window.onload = function() {
+        handleGenderChange(); // 초기 복장 목록 세팅
         document.getElementById('mbtiDesc').innerText = mbtiMap[selectedMBTI].desc;
         generatePrompt();
     };
